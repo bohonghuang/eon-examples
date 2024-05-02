@@ -1,0 +1,15 @@
+#+TITLE: EON Examples
+
+[[file:logo.gif]]
+
+A collection of examples introducing the functionalities of the [[https://github.com/bohonghuang/eon][EON]] game framework.
+
+
+Make sure this repository and the EON framework
+along with its dependencies are properly installed and can be found by
+Quicklisp, then execute the following code in the REPL:
+
+#+BEGIN_SRC lisp
+  (ql:quickload :eon-examples)
+  (eon-examples:main)
+#+END_SRC

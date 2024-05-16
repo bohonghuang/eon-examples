@@ -7,6 +7,8 @@
   :homepage "https://github.com/bohonghuang/eon-examples"
   :bug-tracker "https://github.com/bohonghuang/eon-examples/issues"
   :source-control (:git "https://github.com/bohonghuang/eon-examples.git")
+  :entry-point "eon-examples:main"
+  :build-operation program-op
   :depends-on (#:alexandria #:eon #:eon.debug)
   :serial t
   :components ((:module "src"

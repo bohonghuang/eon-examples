@@ -103,43 +103,55 @@
 (defun (setf quaternion-euler-pitch) (value quaternion)
   (clet ((euler (foreign-alloca '(:struct raylib:vector3))))
     (raylib:%quaternion-to-euler euler (& quaternion))
-    (raylib:%quaternion-from-euler (& quaternion) (-> euler raylib:x) value (-> euler raylib:z))))
+    (raylib:%quaternion-from-euler (& quaternion) (-> euler raylib:x) value (-> euler raylib:z))
+    value))
 
 (defun basic-3d-scene-example ()
   (let* ((screen (make-basic-3d-scene-example-screen))
          (scene (basic-3d-scene-example-screen-scene screen))
-         (cube (make-scene3d-cube :position (raylib:make-vector3 :x -1.0 :y 0.0 :x 0.0)))
-         (model (eon:load-asset 'raylib:model (example-asset #P"robot.glb")))
-         (object (eon:make-scene3d-container
-                  :content model
-                  :position (raylib:make-vector3 :x 1.0 :y 0.0 :x 0.0)
-                  :scale (raylib:vector3-scale (raylib:vector3-one) 0.5)))
-         (tween (ute:timeline
-                 (:sequence
-                  (:to (((quaternion-euler-pitch (scene3d-cube-rotation cube))) (0.0)))
-                  (:to (((quaternion-euler-pitch (scene3d-cube-rotation cube))) ((* 0.5 (coerce pi 'single-float))))
-                   :duration 2.0
-                   :ease #'ute:linear-inout)
-                  :repeat t))))
-    (loop :with materials := (raylib:model-materials model)
-          :for i :below (raylib:model-material-count model)
-          :do (setf (raylib:material-shader (cobj:cref materials i)) (basic-3d-scene-shader scene)))
-    (let* ((animations (eon:load-asset 'raylib:model-animations (example-asset #P"robot.glb")))
-           (animation (cobj:caref animations 3))
-           (animation-frame-count (raylib:model-animation-frame-count animation))
-           (animation-frame-index 0))
-      (eon:add-game-loop-hook
-       (lambda ()
-         (raylib:update-model-animation model animation (setf animation-frame-index (mod (1+ animation-frame-index) animation-frame-count)))
-         (ute::timeline-startedp tween))
-       :after #'identity))
-    (push cube (basic-3d-scene-objects scene))
-    (push object (basic-3d-scene-objects scene))
-    (ajoin
-     (promise-transition-example-screen screen)
-     (async
-       (loop :initially (ute:start tween)
-             :until (eq (await (eon:promise-pressed-key)) :b)
-             :finally (ute:kill tween))))))
+         (custom-model-container (eon:make-scene3d-container
+                                  :content (make-scene3d-cube)
+                                  :position (raylib:make-vector3 :x -1.0 :y 0.0 :x 0.0)))
+         (animated-model (eon:load-asset 'raylib:model (example-asset #P"robot.glb")))
+         (animated-model-container (eon:make-scene3d-container
+                                    :content animated-model
+                                    :position (raylib:make-vector3 :x 1.0 :y 0.0 :x 0.0)
+                                    :scale (raylib:vector3-scale (raylib:vector3-one) 0.5))))
+    (let ((screen-present-p t))
+      (flet ((setup-model-shader (model)
+               (loop :with materials := (raylib:model-materials model)
+                     :for i :below (raylib:model-material-count model)
+                     :do (setf (raylib:material-shader (cobj:cref materials i)) (basic-3d-scene-shader scene))
+                     :finally (return model))))
+        (setup-model-shader animated-model)
+        (let* ((animations (eon:load-asset 'raylib:model-animations (example-asset #P"robot.glb")))
+               (animation (cobj:caref animations 3))
+               (animation-frame-count (raylib:model-animation-frame-count animation))
+               (animation-frame-index 0))
+          (eon:add-game-loop-hook
+           (lambda ()
+             (raylib:with-dropped-files file-path-list
+               (when-let ((path (first-elt
+                                 (cobj:ccoerce
+                                  (cobj:cpointer-carray
+                                   (raylib:file-path-list-paths file-path-list)
+                                   (raylib:file-path-list-count file-path-list))
+                                  'list))))
+                 (setf (eon:scene3d-container-content custom-model-container) (setup-model-shader (eon:load-asset 'raylib:model (pathname path))))))
+             (clet ((quaternion (raylib:quaternion-multiply
+                                 (eon:scene3d-rotation custom-model-container)
+                                 (raylib:quaternion-from-euler 0.0 (eon:game-loop-delta-time) 0.0))))
+               (declare (dynamic-extent quaternion))
+               (raylib:copy-quaternion quaternion (eon:scene3d-rotation custom-model-container)))
+             (raylib:update-model-animation animated-model animation (setf animation-frame-index (mod (1+ animation-frame-index) animation-frame-count)))
+             screen-present-p)
+           :after #'identity)))
+      (push custom-model-container (basic-3d-scene-objects scene))
+      (push animated-model-container (basic-3d-scene-objects scene))
+      (ajoin
+       (promise-transition-example-screen screen)
+       (async
+         (loop :until (eq (await (eon:promise-pressed-key)) :b)
+               :finally (setf screen-present-p nil)))))))
 
 (pushnew 'basic-3d-scene-example *examples*)

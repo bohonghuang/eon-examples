@@ -96,7 +96,7 @@
        (async
          (loop
            (case (eon.debug:with-popped-prompt (format nil "< ~A: ~D >" 'emitter-index emitter-index)
-                   (await (eon:promise-pressed-key)))
+                   (await (eon:promise-pressed-controller-button)))
              (:left (setf emitter-index (mod (1- emitter-index) (length emitters))))
              (:right (setf emitter-index (mod (1+ emitter-index) (length emitters))))
              (:b (return)))))))))

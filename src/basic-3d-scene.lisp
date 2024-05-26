@@ -145,13 +145,13 @@
                (raylib:copy-quaternion quaternion (eon:scene3d-rotation custom-model-container)))
              (raylib:update-model-animation animated-model animation (setf animation-frame-index (mod (1+ animation-frame-index) animation-frame-count)))
              screen-present-p)
-           :after #'identity)))
-      (push custom-model-container (basic-3d-scene-objects scene))
-      (push animated-model-container (basic-3d-scene-objects scene))
-      (ajoin
-       (promise-transition-example-screen screen)
-       (async
-         (loop :until (eq (await (eon:promise-pressed-key)) :b)
-               :finally (setf screen-present-p nil)))))))
+           :after #'identity))
+        (push custom-model-container (basic-3d-scene-objects scene))
+        (push animated-model-container (basic-3d-scene-objects scene))
+        (ajoin
+         (promise-transition-example-screen screen)
+         (async
+           (loop :until (eq (await (eon:promise-pressed-controller-button)) :b)
+                 :finally (setf screen-present-p nil))))))))
 
 (pushnew 'basic-3d-scene-example *examples*)

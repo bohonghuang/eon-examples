@@ -49,7 +49,7 @@
      (promise-transition-example-screen screen)
      (async
        (loop :initially (ute:start tween)
-             :until (eq (await (eon:promise-pressed-key)) :b)
+             :until (eq (await (eon:promise-pressed-controller-button)) :b)
              :finally (ute:kill tween))))))
 
 (pushnew 'scene2d-image-example *examples*)

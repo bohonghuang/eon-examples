@@ -90,6 +90,6 @@
     (eon:scene2d-layout cell)
     (ajoin
      (promise-transition-example-screen screen)
-     (async (loop :until (eq (await (eon:promise-pressed-key)) :b))))))
+     (async (loop :until (eq (await (eon:promise-pressed-controller-button)) :b))))))
 
 (pushnew 'scene2d-layout-example *examples*)

@@ -21,7 +21,7 @@
                      :left 2.0 :right 2.0 :top 2.0 :bottom 2.0
                      :child (eon:select-box
                              :name select-box
-                             :dimensions (2 T)
+                             :dimensions (T 2)
                              :entries (mapcar
                                        (lambda (string)
                                          (eon:scene2d-construct

@@ -32,7 +32,7 @@
      :child (eon:scene2d-window
              :child (eon:select-box
                      :name select-box
-                     :dimensions (1 T)
+                     :dimensions (T 1)
                      :entries ((bgm-sfx-example-entry :key "BGM" :value nil)
                                (bgm-sfx-example-entry :key "SFX" :value nil))))))
 

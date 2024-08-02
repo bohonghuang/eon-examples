@@ -19,6 +19,7 @@
                              (:file "scene2d-layout")
                              (:file "dialog-box")
                              (:file "select-box")
+                             (:file "virtual-keyboard")
                              (:file "input-field")
                              (:file "parallax-background")
                              (:file "tiled-map")

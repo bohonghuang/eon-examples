@@ -1,21 +1,21 @@
 (in-package #:eon-examples)
 
-(eon:define-scene2d-constructed logo-example-screen-cell
-    (scene2d-screen-cell
-     :child (eon:scene2d-shaderable-container
-             :name shaderable-container
-             :shader (raylib:shader (example-asset #P"text-shine"))
-             :shader-uniforms (make-logo-example-screen-cell-shader-uniforms)
-             :child (eon:scene2d-box
-                     :name root-box
-                     :orientation :vertical
-                     :children ((eon:scene2d-box
-                                 :name logo-box
-                                 :orientation :horizontal
-                                 :children (loop :for char :across "EONExamples"
-                                                 :for string := (string char)
-                                                 :collect (eon:scene2d-construct (eon:scene2d-margin :right (if (char= char #\N) 4.0 0.0) :right 0.0 :child (eon:scene2d-label :string string :style (eon:scene2d-label-style :text-style (eon:text-style :size 50.0 :font (raylib:font (example-asset #P"clacon2.ttf"))) :shadow nil :color raylib:+white+))))))
-                                (eon:scene2d-margin :top 24.0 :child (eon:scene2d-label :name author-label :string "bohonghuang" :style (eon:scene2d-label-style :text-style (eon:text-style :size 20.0) :shadow nil :color (255 0 255 255)))))))))
+(eon:define-scene2d-constructed logo-example-screen-cell ()
+  (scene2d-screen-cell
+   :child (eon:scene2d-shaderable-container
+           :name shaderable-container
+           :shader (raylib:shader (example-asset #P"text-shine"))
+           :shader-uniforms (make-logo-example-screen-cell-shader-uniforms)
+           :child (eon:scene2d-box
+                   :name root-box
+                   :orientation :vertical
+                   :children ((eon:scene2d-box
+                               :name logo-box
+                               :orientation :horizontal
+                               :children (loop :for char :across "EONExamples"
+                                               :for string := (string char)
+                                               :collect (eon:scene2d-construct (eon:scene2d-margin :right (if (char= char #\N) 4.0 0.0) :right 0.0 :child (eon:scene2d-label :string string :style (eon:scene2d-label-style :text-style (eon:text-style :size 50.0 :font (raylib:font (example-asset #P"clacon2.ttf"))) :shadow nil :color raylib:+white+))))))
+                              (eon:scene2d-margin :top 24.0 :child (eon:scene2d-label :name author-label :string "bohonghuang" :style (eon:scene2d-label-style :text-style (eon:text-style :size 20.0) :shadow nil :color (255 0 255 255)))))))))
 
 (defun logo-example-screen-cell-shader (cell)
   (eon::scene2d-shaderable-container-shader (logo-example-screen-cell-shaderable-container cell)))

@@ -1,18 +1,18 @@
 (in-package #:eon-examples)
 
-(eon:define-scene2d-constructed parallax-background-example-screen-cell
-    (scene2d-screen-cell
-     :child (eon:scene2d-group
-             :children ((eon:scene2d-tile-scroll-region
-                         :name background-1
-                         :style (eon:scene2d-tile-scroll-region-style
-                                 :tile-scroll-style (eon:scene2d-tile-scroll-style :tile (raylib:texture (example-asset #P"parallax-1.png"))))
-                         :size (#.+viewport-width+ #.+viewport-height+))
-                        (eon:scene2d-tile-scroll-region
-                         :name background-2
-                         :style (eon:scene2d-tile-scroll-region-style
-                                 :tile-scroll-style (eon:scene2d-tile-scroll-style :tile (raylib:texture (example-asset #P"parallax-2.png"))))
-                         :size (#.+viewport-width+ #.+viewport-height+))))))
+(eon:define-scene2d-constructed parallax-background-example-screen-cell ()
+  (scene2d-screen-cell
+   :child (eon:scene2d-group
+           :children ((eon:scene2d-tile-scroll-region
+                       :name background-1
+                       :style (eon:scene2d-tile-scroll-region-style
+                               :tile-scroll-style (eon:scene2d-tile-scroll-style :tile (raylib:texture (example-asset #P"parallax-1.png"))))
+                       :size (#.+viewport-width+ #.+viewport-height+))
+                      (eon:scene2d-tile-scroll-region
+                       :name background-2
+                       :style (eon:scene2d-tile-scroll-region-style
+                               :tile-scroll-style (eon:scene2d-tile-scroll-style :tile (raylib:texture (example-asset #P"parallax-2.png"))))
+                       :size (#.+viewport-width+ #.+viewport-height+))))))
 
 (defstruct parallax-background-example-screen
   (cell (make-parallax-background-example-screen-cell) :type eon:scene2d-constructed))

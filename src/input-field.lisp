@@ -1,14 +1,14 @@
 (in-package #:eon-examples)
 
-(eon:define-scene2d-constructed input-field-example-screen-cell
-    (scene2d-screen-cell
-     :child (eon:scene2d-window
-             :child (eon:scene2d-margin
-                     :left 2.0 :right 2.0 :top 2.0 :bottom 2.0
-                     :child (eon:scene2d-max-cell
-                             :size (160.0 0.0)
-                             :alignment (:start :center)
-                             :child (eon:input-field :name input-field))))))
+(eon:define-scene2d-constructed input-field-example-screen-cell ()
+  (scene2d-screen-cell
+   :child (eon:scene2d-window
+           :child (eon:scene2d-margin
+                   :left 2.0 :right 2.0 :top 2.0 :bottom 2.0
+                   :child (eon:scene2d-max-cell
+                           :size (160.0 0.0)
+                           :alignment (:start :center)
+                           :child (eon:input-field :name input-field))))))
 
 (defstruct input-field-example-screen
   (cell (make-input-field-example-screen-cell) :type eon:scene2d-constructed))

@@ -1,9 +1,9 @@
 (in-package #:eon-examples)
 
-(eon:define-scene2d-constructed scene2d-image-example-screen-cell
-    (scene2d-screen-cell
-     :alignment (:start :end)
-     :child (eon:scene2d-label :name image-information-label :string "")))
+(eon:define-scene2d-constructed scene2d-image-example-screen-cell ()
+  (scene2d-screen-cell
+   :alignment (:start :end)
+   :child (eon:scene2d-label :name image-information-label :string "")))
 
 (defstruct scene2d-image-example-screen
   (cell (make-scene2d-image-example-screen-cell) :type eon:scene2d-constructed)

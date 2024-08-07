@@ -1,22 +1,17 @@
 (in-package #:eon-examples)
 
-(eon:define-scene2d-constructed bgm-sfx-example-entry
-    (eon:scene2d-box
-     :name box
-     :orientation :horizontal
-     :children ((eon:scene2d-max-cell
-                 :size (64.0 0.0)
-                 :alignment (:start :center)
-                 :child (eon:scene2d-label :name key-label :string ""))
-                (eon:scene2d-max-cell
-                 :size (64.0 0.0)
-                 :alignment (:end :center)
-                 :child (eon:scene2d-label :name value-label :string ""))))
-  (:constructor (&key key value)
-      (let ((entry (%make-bgm-sfx-example-entry)))
-        (setf (eon:scene2d-label-string (bgm-sfx-example-entry-key-label entry)) key
-              (bgm-sfx-example-entry-playing-p entry) value)
-        entry)))
+(eon:define-scene2d-constructed bgm-sfx-example-entry (&key (key "") (value ""))
+  (eon:scene2d-box
+   :name box
+   :orientation :horizontal
+   :children ((eon:scene2d-max-cell
+               :size (64.0 0.0)
+               :alignment (:start :center)
+               :child (eon:scene2d-label :name key-label :string key))
+              (eon:scene2d-max-cell
+               :size (64.0 0.0)
+               :alignment (:end :center)
+               :child (eon:scene2d-label :name value-label :string value)))))
 
 (defun bgm-sfx-example-entry-playing-p (entry)
   (string= (eon:scene2d-label-string (bgm-sfx-example-entry-value-label entry)) "PLAYING"))
@@ -27,14 +22,14 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (eon:define-scene2d-default-construct-form bgm-sfx-example-entry (key value)))
 
-(eon:define-scene2d-constructed bgm-sfx-example-screen-cell
-    (scene2d-screen-cell
-     :child (eon:scene2d-window
-             :child (eon:select-box
-                     :name select-box
-                     :dimensions (T 1)
-                     :entries ((bgm-sfx-example-entry :key "BGM" :value nil)
-                               (bgm-sfx-example-entry :key "SFX" :value nil))))))
+(eon:define-scene2d-constructed bgm-sfx-example-screen-cell ()
+  (scene2d-screen-cell
+   :child (eon:scene2d-window
+           :child (eon:select-box
+                   :name select-box
+                   :dimensions (T 1)
+                   :entries ((bgm-sfx-example-entry :key "BGM" :value "STOPPED")
+                             (bgm-sfx-example-entry :key "SFX" :value "STOPPED"))))))
 
 (defstruct bgm-sfx-example-screen
   (cell (make-bgm-sfx-example-screen-cell) :type eon:scene2d-constructed))

@@ -14,23 +14,23 @@
         "Kiwi")
     :test #'equal))
 
-(eon:define-scene2d-constructed select-box-example-screen-cell
-    (scene2d-screen-cell
-     :child (eon:scene2d-window
-             :child (eon:scene2d-margin
-                     :left 2.0 :right 2.0 :top 2.0 :bottom 2.0
-                     :child (eon:select-box
-                             :name select-box
-                             :dimensions (T 2)
-                             :entries (mapcar
-                                       (lambda (string)
-                                         (eon:scene2d-construct
-                                          (eon:scene2d-margin
-                                           :top 1.0 :bottom 1.0 :left 1.0 :right 1.0
-                                           :child (eon:scene2d-max-cell
-                                                   :size (64.0 0.0)
-                                                   :child (eon:scene2d-label :string string)))))
-                                       +select-box-example-fruits+))))))
+(eon:define-scene2d-constructed select-box-example-screen-cell ()
+  (scene2d-screen-cell
+   :child (eon:scene2d-window
+           :child (eon:scene2d-margin
+                   :left 2.0 :right 2.0 :top 2.0 :bottom 2.0
+                   :child (eon:select-box
+                           :name select-box
+                           :dimensions (T 2)
+                           :entries (mapcar
+                                     (lambda (string)
+                                       (eon:scene2d-construct
+                                        (eon:scene2d-margin
+                                         :top 1.0 :bottom 1.0 :left 1.0 :right 1.0
+                                         :child (eon:scene2d-max-cell
+                                                 :size (64.0 0.0)
+                                                 :child (eon:scene2d-label :string string)))))
+                                     +select-box-example-fruits+))))))
 
 (defstruct select-box-example-screen
   (cell (make-select-box-example-screen-cell) :type eon:scene2d-constructed))

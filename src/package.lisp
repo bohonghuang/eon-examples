@@ -67,6 +67,57 @@
          (unless (eq (eon:current-screen) ,screen)
            (await (promise-transition-example-screen ,screen)))))))
 
+(defstruct hq2x
+  (shader (eon:load-asset 'raylib:shader (example-asset #P"hq2x")) :type raylib:shader)
+  (shader-uniforms (make-hq2x-shader-uniforms) :type cobj:cobject))
+
+(eon:define-shaderable-uniforms hq2x
+  ("inputSize" (raylib:make-vector2
+                :x (float +viewport-width+)
+                :y (float +viewport-height+))
+               :type raylib:vector2))
+
+(defun hq2x-processor ()
+  (let ((hq2x (make-hq2x)))
+    (lambda (draw-function)
+      (raylib:with-shader-mode (hq2x-shader hq2x)
+        (update-hq2x-shader-uniforms hq2x)
+        (funcall draw-function)))))
+
+(defstruct lcd3x
+  (shader (eon:load-asset 'raylib:shader (example-asset #P"lcd3x")) :type raylib:shader)
+  (shader-uniforms (make-lcd3x-shader-uniforms) :type cobj:cobject))
+
+(eon:define-shaderable-uniforms lcd3x
+  ("inputSize" (raylib:make-vector2
+                :x (float +viewport-width+)
+                :y (float +viewport-height+))
+               :type raylib:vector2))
+
+(defun lcd3x-processor ()
+  (let ((lcd3x (make-lcd3x)))
+    (lambda (draw-function)
+      (raylib:with-shader-mode (lcd3x-shader lcd3x)
+        (update-lcd3x-shader-uniforms lcd3x)
+        (funcall draw-function)))))
+
+(defstruct hq4x
+  (shader (eon:load-asset 'raylib:shader (example-asset #P"hq4x")) :type raylib:shader)
+  (shader-uniforms (make-hq4x-shader-uniforms) :type cobj:cobject))
+
+(eon:define-shaderable-uniforms hq4x
+  ("inputSize" (raylib:make-vector2
+                :x (float +viewport-width+)
+                :y (float +viewport-height+))
+               :type raylib:vector2))
+
+(defun hq4x-processor ()
+  (let ((hq4x (make-hq4x)))
+    (lambda (draw-function)
+      (raylib:with-shader-mode (hq4x-shader hq4x)
+        (update-hq4x-shader-uniforms hq4x)
+        (funcall draw-function)))))
+
 (defun main ()
   (catch 'exit
     (raylib:set-config-flags (cffi:foreign-bitfield-value 'raylib:config-flags '(:window-resizable)))
@@ -97,4 +148,36 @@
                     :while example
                     :do (save-screen-excursion (await (funcall example))))
               (throw 'exit nil))))
-        (eon:do-screen-loop (eon:make-fit-viewport :width +viewport-width+ :height +viewport-height+))))))
+        (eon:do-screen-loop
+            (eon:make-post-effect-viewport
+             :width +viewport-width+
+             :height +viewport-height+
+             :processor (let ((size 2)
+                              (1x #'funcall)
+                              (hq2x (hq2x-processor))
+                              (lcd3x (lcd3x-processor))
+                              (hq4x (hq4x-processor)))
+                          (declare (type (mod 8) size))
+                          (eon:add-game-loop-hook
+                           (lambda ()
+                             (cond
+                               ((raylib:is-key-pressed #.(cffi:foreign-enum-value 'raylib:keyboard-key :equal))
+                                (setf size (min (1+ size) 4))
+                                (raylib:set-window-size (* +viewport-width+ size) (* +viewport-height+ size)))
+                               ((raylib:is-key-pressed #.(cffi:foreign-enum-value 'raylib:keyboard-key :minus))
+                                (setf size (max (1- size) 1))
+                                (raylib:set-window-size (* +viewport-width+ size) (* +viewport-height+ size)))))
+                           :after t)
+                          (lambda (draw-function)
+                            (rlgl:load-identity)
+                            (rlgl:scalef 4.0 4.0 1.0)
+                            (funcall
+                             (ecase size
+                               (1 1x)
+                               (2 hq2x)
+                               (3 lcd3x)
+                               (4 hq4x))
+                             draw-function)))
+             :viewport (eon:make-fit-viewport
+                        :width (* +viewport-width+ 4)
+                        :height (* +viewport-height+ 4))))))))

@@ -17,6 +17,7 @@
                              (:file "scene2d-window")
                              (:file "scene2d-label")
                              (:file "scene2d-layout")
+                             (:file "progress-bar")
                              (:file "dialog-box")
                              (:file "select-box")
                              (:file "virtual-keyboard")
